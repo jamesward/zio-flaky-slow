@@ -21,10 +21,4 @@ object Slow extends App:
         Response.text(s"hello, slow.  We took: $delay millisconds.  Hope you got a coffee.")
 
   override def run(args: List[String]) =
-    val server = for
-      maybePort <- env("PORT")
-      port = maybePort.map(_.toInt).getOrElse(8082)
-      started <- Server.start(port, app)
-    yield started
-
-    server.exitCode
+    Server.start(8082, app).exitCode

@@ -22,10 +22,4 @@ object Flaky extends App:
       yield result
 
   override def run(args: List[String]) =
-    val server = for
-      maybePort <- env("PORT")
-      port = maybePort.map(_.toInt).getOrElse(8081)
-      started <- Server.start(port, app)
-    yield started
-
-    server.exitCode
+    Server.start(8081, app).exitCode

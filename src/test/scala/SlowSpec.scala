@@ -23,7 +23,5 @@ object SlowSpec extends DefaultRunnableSpec:
         _ <- TestClock.adjust(1.minute)
         resp <- fork.join
       yield
-        //val chunks: Chunk[Byte] = resp.asInstanceOf[Response.HttpResponse[Any, Nothing]].content.asInstanceOf[HttpData.CompleteData].data
-        //println(new String(chunks.toArray))
         val expected = Response.text("hello, slow.  We took: 1000 millisconds.  Hope you got a coffee.")
         assert(resp)(isSubtype[Response.HttpResponse[Any, Nothing]](equalTo(expected)))

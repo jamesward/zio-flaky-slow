@@ -1,11 +1,18 @@
-ZIO Flaky
----------
+ZIO Flaky & Slow
+----------------
+
+```
+./sbt test
 
 ./sbt "runMain Flaky"
 
 ./sbt "runMain Slow"
 
-./sbt "runMain ZioWebApp"
+./sbt "runMain WebApp"
+```
+
+- [localhost:8080/flaky](http://localhost:8080/flaky)
+- [localhost:8080/slow](http://localhost:8080/slow)
 
 ## Todo
 
