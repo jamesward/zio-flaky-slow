@@ -1,23 +1,17 @@
 import zhttp.http.*
-import zhttp.http.Response.HttpResponse
 import zhttp.service.{ChannelFactory, Client, EventLoopGroup, Server}
-import zio.*
-import zio.duration.durationInt
-import zio.system.env
-import zio.stream.*
+import zio.{durationInt, Schedule, ZIO, ZIOAppDefault}
 
-import java.io.IOException
+object WebApp extends ZIOAppDefault:
 
-object WebApp extends App:
-
-  val app = Http.collectM[Request]:
-    case Method.GET -> Root / "flaky" =>
+  val app = Http.collectZIO[Request]:
+    case Method.GET -> !! / "flaky" =>
       val url = "http://localhost:8081/"
       Client.request(url).flatMap(upper).retry(Schedule.recurs(5))
 
-    case Method.GET -> Root / "slow" =>
+    case Method.GET -> !! / "slow" =>
       val url = "http://localhost:8082/"
-      val req = Client.request(url)
+      val req = Client.request(url).flatMap(_.getBodyAsString).map(Response.text(_))
       val hedge =
         for
           _ <- ZIO.sleep(1.second)
@@ -26,6 +20,6 @@ object WebApp extends App:
 
       req.race(hedge)
 
-  override def run(args: List[String]) =
+  def run =
     val clientEnv = ChannelFactory.auto ++ EventLoopGroup.auto()
     Server.start(8080, app).exitCode.provideCustomLayer(clientEnv)

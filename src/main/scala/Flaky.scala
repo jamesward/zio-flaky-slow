@@ -1,19 +1,17 @@
 import zhttp.http.*
 import zhttp.service.Server
-import zio.random.nextBoolean
-import zio.system.env
-import zio.console.putStrLn
-import zio.{App, ZIO}
+import zio.{Random, ZIOAppDefault, ZIO}
+import zio.Console.printLine
 
 import java.io.IOException
 
-object Flaky extends App:
+object Flaky extends ZIOAppDefault:
 
-  val app = Http.collectM[Request]:
-    case Method.GET -> Root =>
+  val app = Http.collectZIO[Request]:
+    case Method.GET -> !! =>
       for
-        succeed <- nextBoolean
-        _ <- if succeed then putStrLn("not flaky") else putStrLn("flaky")
+        succeed <- Random.nextBoolean
+        _ <- if succeed then printLine("not flaky") else printLine("flaky")
         result <-
           if succeed then
             ZIO.succeed(Response.text("hello, flaky"))
@@ -21,5 +19,5 @@ object Flaky extends App:
             ZIO.fail(IOException("erggg"))
       yield result
 
-  override def run(args: List[String]) =
+  def run =
     Server.start(8081, app).exitCode
