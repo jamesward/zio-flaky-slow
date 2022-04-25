@@ -11,7 +11,9 @@ object WebApp extends ZIOAppDefault:
 
     case Method.GET -> !! / "slow" =>
       val url = "http://localhost:8082/"
-      val req = Client.request(url).flatMap(_.getBodyAsString).map(Response.text(_))
+
+      val req = Client.request(url)
+
       val hedge =
         for
           _ <- ZIO.sleep(1.second)
@@ -20,6 +22,7 @@ object WebApp extends ZIOAppDefault:
 
       req.race(hedge)
 
+
   def run =
-    val clientEnv = ChannelFactory.auto ++ EventLoopGroup.auto()
-    Server.start(8080, app).exitCode.provideCustomLayer(clientEnv)
+    val clientLayers = ChannelFactory.auto ++ EventLoopGroup.auto()
+    Server.start(8080, app.provideLayer(clientLayers)).exitCode

@@ -1,12 +1,12 @@
+import zhttp.http.{Request, Response}
 import zhttp.test.*
-import zhttp.http.*
 import zio.test.*
 import zio.test.Assertion.*
 import zio.test.Assertion.Render.*
 
 import java.io.IOException
 
-object FlakySpec extends DefaultRunnableSpec:
+object FlakySpec extends ZIOSpecDefault:
   val test1 = test("true should succeed"):
     for
       _ <- TestRandom.feedBooleans(true)
@@ -20,8 +20,8 @@ object FlakySpec extends DefaultRunnableSpec:
     for
       _ <- TestRandom.feedBooleans(false)
       req = Request()
-      resp <- Flaky.app(req).run
+      resp <- Flaky.app(req).exit
     yield
-      assert(resp)(fails[Option[IOException]](anything))
+      assert(resp)(fails(isSome[IOException](anything)))
 
   def spec = suite("flaky")(test1, test2)

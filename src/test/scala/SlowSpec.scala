@@ -8,10 +8,10 @@ import zio.test.Assertion.Render.*
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-object SlowSpec extends DefaultRunnableSpec:
+object SlowSpec extends ZIOSpecDefault:
 
   def spec = suite("slow"):
-    testM("should have a delay"):
+    test("should have a delay"):
       for
         _ <- TestRandom.feedInts(1000)
         req = Request()
