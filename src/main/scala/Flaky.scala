@@ -1,7 +1,7 @@
 import zhttp.http.*
 import zhttp.service.Server
-import zio.{Random, ZIOAppDefault, ZIO}
 import zio.Console.printLine
+import zio.{Random, ZIO, ZIOAppDefault}
 
 import java.io.IOException
 

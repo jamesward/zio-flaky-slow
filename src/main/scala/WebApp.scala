@@ -1,6 +1,6 @@
 import zhttp.http.*
 import zhttp.service.{ChannelFactory, Client, EventLoopGroup, Server}
-import zio.{durationInt, Schedule, ZIO, ZIOAppDefault}
+import zio.{Schedule, ZIO, ZIOAppDefault, durationInt}
 
 object WebApp extends ZIOAppDefault:
 
@@ -11,18 +11,10 @@ object WebApp extends ZIOAppDefault:
 
     case Method.GET -> !! / "slow" =>
       val url = "http://localhost:8082/"
-
       val req = Client.request(url)
-
-      val hedge =
-        for
-          _ <- ZIO.sleep(1.second)
-          result <- req
-        yield result
-
+      val hedge = ZIO.sleep(1.second) *> req
       req.race(hedge)
-
 
   def run =
     val clientLayers = ChannelFactory.auto ++ EventLoopGroup.auto()
-    Server.start(8080, app.provideLayer(clientLayers)).exitCode
+    Server.start(8080, app).provideLayer(clientLayers).exitCode

@@ -1,7 +1,7 @@
 import zhttp.http.*
 import zhttp.service.Server
-import zio.{Random, ZIOAppDefault, ZIO, durationInt}
 import zio.Console.printLine
+import zio.{Random, ZIO, ZIOAppDefault, durationInt}
 
 object Slow extends ZIOAppDefault:
 
