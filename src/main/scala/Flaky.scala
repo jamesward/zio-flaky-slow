@@ -7,7 +7,7 @@ import java.io.IOException
 
 object Flaky extends ZIOAppDefault:
 
-  val app = Http.collectZIO[Request]:
+  val app = Http.collectZIO[Request] {
     case Method.GET -> !! =>
       for
         succeed <- Random.nextBoolean
@@ -18,6 +18,7 @@ object Flaky extends ZIOAppDefault:
           else
             ZIO.fail(IOException("erggg"))
       yield result
+  }
 
   def run =
     Server.start(8081, app).exitCode

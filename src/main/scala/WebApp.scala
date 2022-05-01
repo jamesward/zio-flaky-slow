@@ -4,7 +4,7 @@ import zio.{Schedule, ZIO, ZIOAppDefault, durationInt}
 
 object WebApp extends ZIOAppDefault:
 
-  val app = Http.collectZIO[Request]:
+  val app = Http.collectZIO[Request] {
     case Method.GET -> !! / "flaky" =>
       val url = "http://localhost:8081/"
       Client.request(url).flatMap(upper).retry(Schedule.recurs(5))
@@ -14,6 +14,7 @@ object WebApp extends ZIOAppDefault:
       val req = Client.request(url)
       val hedge = ZIO.sleep(1.second) *> req
       req.race(hedge)
+  }
 
   def run =
     val clientLayers = ChannelFactory.auto ++ EventLoopGroup.auto()
